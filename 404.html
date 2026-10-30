@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>页面不存在</title>
+<meta name="robots" content="noindex">
+<!-- 样式内联，不引 style.css。
+     GitHub / GitLab Pages 的项目站挂在 /<仓库名>/ 下，404 页又会被任意
+     深度的路径触发：写 /style.css 请求到域名根，写 ./style.css 在
+     /<仓库名>/a/b/ 下解析成 /<仓库名>/a/style.css —— 两种都拿不到。
+     内联是唯一在所有平台、所有路径下都不裸奔的做法。 -->
+<style>
+  :root { color-scheme: dark light; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; align-items: center;
+    background: #12151A; color: #ECEFF3;
+    font-family: "PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 34rem; margin: 0 auto; padding: 3rem 1.5rem; width: 100%; }
+  h1 { font-size: clamp(2rem,8vw,2.75rem); font-weight: 700; line-height: 1.1; margin: 0; }
+  .lede { color: #9AA5B2; margin: .875rem 0 2rem; font-size: .9375rem; }
+  .back {
+    display: inline-block; padding: .625rem 1.125rem;
+    background: #F2653F; color: #2A1008; font-weight: 600; font-size: .875rem;
+    text-decoration: none;
+  }
+  .back:hover { opacity: .88; }
+  a:focus-visible { outline: 2px solid #F2653F; outline-offset: 2px; }
+  @media (prefers-color-scheme: light) {
+    body { background: #F2F0EC; color: #16191E; }
+    .lede { color: #58616D; }
+    /* 浅色模式下强调色压深，配白字 */
+    .back { background: #B83F1C; color: #FFFFFF; }
+    a:focus-visible { outline-color: #B83F1C; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>没有这一页</h1>
+  <p class="lede">404。你要找的地址在这个站上不存在。</p>
+  <!-- 默认指根目录（Cloudflare Pages 就挂在根上）。
+       ./ 不行：404 会被任意深度的路径触发，/a/b/c 下的 ./
+       只会解析到 /a/b/，还是 404。 -->
+  <a class="back" id="home" href="/">回取景框</a>
+</div>
+<script>
+  /* 改写基准路径：要「项目站主机」且「路径第一段等于目录名」两个条件同时成立。
+     只满足一个都会出错：
+       - 只看主机名：仓库叫 <用户名>.github.io 时站点挂在根上，改写反而把 / 弄坏
+       - 只看路径段：Cloudflare 根站上访问过时的 /photonav/xxx，
+                     按钮会指向 /photonav/ —— 根站上同样是 404，死循环
+     常见的四种形态都对：
+       photonav.pages.dev/nope       → 非项目站主机     → /
+       x.github.io/photonav/nope     → 命中            → /photonav/
+       x.github.io/nope（用户站）  → 第一段 ≠ photonav   → /
+       x.gitlab.io/photonav/a/b/c    → 命中            → /photonav/
+     仍有一个兜不住的角落：用户站（仓库名就叫 x.github.io）上恰好存在
+     /photonav/ 这个路径时，两个条件都成立，按钮会指到一个同样不存在的地址。
+     纯靠前端判断不出来，只能靠不在用户站下用同名目录来避开。
+     换仓库名或换目录名时，下面的 DIR 要一起改。 */
+  (function () {
+    var DIR = 'photonav';
+    var projectHost = /\.(github|gitlab)\.io$/i.test(location.hostname);
+    /* GitHub 的路径不区分大小写，比对前统一转小写 */
+    var seg = (location.pathname.split('/')[1] || '').toLowerCase();
+    if (projectHost && seg === DIR) {
+      document.getElementById('home').href = '/' + DIR + '/';
+    }
+  })();
+</script>
+</body>
+</html>
